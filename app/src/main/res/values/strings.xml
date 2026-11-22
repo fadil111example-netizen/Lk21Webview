@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LK21 WebView</string>
+    <string name="error_message">Halaman gagal dimuat. Periksa koneksi internet Anda.</string>
+    <string name="retry">Coba lagi</string>
+    <string name="blocked_toast">Tautan iklan/eksternal diblokir</string>
+</resources>

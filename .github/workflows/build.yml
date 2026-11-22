@@ -1,0 +1,85 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: 'platforms;android-34 build-tools;34.0.0'
+
+      - name: Set up Gradle 8.9
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Catat info lingkungan
+        shell: bash
+        run: |
+          mkdir -p build-logs
+          {
+            echo "== java =="; java -version 2>&1
+            echo "== gradle =="; gradle --version 2>&1
+            echo "== ANDROID_HOME =="; echo "$ANDROID_HOME"
+            echo "== struktur proyek =="; find . -path ./.git -prune -o -type f -print | sort
+          } > build-logs/env-info.txt 2>&1
+
+      - name: Build debug dan release APK
+        shell: bash
+        run: |
+          gradle --no-daemon assembleDebug assembleRelease --stacktrace --info 2>&1 | tee build-logs/gradle-build.log
+
+      - name: Unggah APK debug
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
+      - name: Unggah APK release
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
+
+      - name: Kumpulkan log saat build gagal
+        if: failure()
+        shell: bash
+        run: |
+          mkdir -p build-logs/reports build-logs/daemon
+          cp -r app/build/reports build-logs/reports/app 2>/dev/null || true
+          cp -r build/reports build-logs/reports/root 2>/dev/null || true
+          find /home/runner/.gradle/daemon -name '*.out.log' -exec cp {} build-logs/daemon/ \; 2>/dev/null || true
+          ls -laR build-logs > build-logs/_daftar-file-log.txt 2>&1 || true
+
+      - name: Unggah log build (hanya jika gagal)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-error-logs
+          path: build-logs
+          include-hidden-files: true
+          retention-days: 14
+          if-no-files-found: warn
