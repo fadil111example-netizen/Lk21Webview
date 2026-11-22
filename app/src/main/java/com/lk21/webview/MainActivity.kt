@@ -268,7 +268,7 @@ class MainActivity : AppCompatActivity() {
                 customContainer.visibility = View.VISIBLE
                 webView.visibility = View.INVISIBLE
                 requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-                setImmersive(true)
+                applyFullscreenMode(true)
             }
 
             override fun onHideCustomView() {
@@ -284,12 +284,12 @@ class MainActivity : AppCompatActivity() {
         customContainer.visibility = View.GONE
         if (!mainFrameError) webView.visibility = View.VISIBLE
         requestedOrientation = previousOrientation
-        setImmersive(false)
+        applyFullscreenMode(false)
         customCallback?.onCustomViewHidden()
         customCallback = null
     }
 
-    private fun setImmersive(enable: Boolean) {
+    private fun applyFullscreenMode(enable: Boolean) {
         val controller = WindowInsetsControllerCompat(window, window.decorView)
         if (enable) {
             controller.systemBarsBehavior =
