@@ -48,6 +48,7 @@ class MainActivity : AppCompatActivity() {
     private var lastUrl: String? = null
     private var lastBlockedToast = 0L
     private var webViewDestroyed = false
+    private var firstPageLoaded = false
 
     private val injectedScript: String by lazy {
         readAsset("guard.js") + "\n" + readAsset("hydrax.js")
@@ -136,7 +137,13 @@ class MainActivity : AppCompatActivity() {
                 if (scheme != "http" && scheme != "https") {
                     return true
                 }
-                if (HostPolicy.isAllowedPage(url)) {
+                if (HostPolicy.isBlocked(url)) {
+                    notifyBlocked()
+                    return true
+                }
+                // Sebelum halaman pertama berhasil tampil, redirect/mirror situs dibiarkan lewat
+                // (kecuali domain iklan). Setelah itu, hanya domain situs yang boleh dibuka.
+                if (!firstPageLoaded || HostPolicy.isAllowedPage(url)) {
                     return false
                 }
                 notifyBlocked()
@@ -167,7 +174,10 @@ class MainActivity : AppCompatActivity() {
             override fun onPageFinished(view: WebView, url: String?) {
                 super.onPageFinished(view, url)
                 view.evaluateJavascript(injectedScript, null)
-                if (!mainFrameError) hideError()
+                if (!mainFrameError) {
+                    firstPageLoaded = true
+                    hideError()
+                }
             }
 
             override fun onReceivedError(
@@ -178,7 +188,10 @@ class MainActivity : AppCompatActivity() {
                 super.onReceivedError(view, request, error)
                 if (request.isForMainFrame) {
                     mainFrameError = true
-                    showError()
+                    showError(
+                        getString(R.string.error_message) + "\n\n" +
+                            error.description + "\n" + request.url
+                    )
                 }
             }
 
@@ -300,7 +313,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun showError() {
+    private fun showError(message: String) {
+        errorText.text = message
         errorView.visibility = View.VISIBLE
         webView.visibility = View.INVISIBLE
     }
@@ -348,6 +362,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val START_URL = "https://tv.lk21official.dev/"
+        private const val START_URL = "https://tv12.lk21official.cc/"
     }
 }

@@ -3,7 +3,7 @@
   if (window.__lkGuardInstalled) return;
   window.__lkGuardInstalled = true;
 
-  var ALLOW_SUFFIX = ['lk21official.dev', 'lk21.de', 'nontondrama.vip', 'assetsy.de', 'dadadidi.de', 'd21.team', 'videonode.de'];
+  var ALLOW_SUFFIX = ['lk21official.dev', 'lk21official.cc', 'lk21.de', 'nontondrama.vip', 'assetsy.de', 'dadadidi.de', 'd21.team', 'videonode.de'];
   var ALLOW_KEYWORD = ['lk21', 'nontondrama', 'layarkaca'];
   var BLOCK_SUFFIX = [
     'yellowishgather.com', 'doubleclick.net', 'googlesyndication.com', 'googleadservices.com',

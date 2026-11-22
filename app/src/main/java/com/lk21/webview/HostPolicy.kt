@@ -11,6 +11,7 @@ object HostPolicy {
 
     private val allowedSuffixes = listOf(
         "lk21official.dev",
+        "lk21official.cc",
         "lk21.de",
         "nontondrama.vip",
         "assetsy.de",
