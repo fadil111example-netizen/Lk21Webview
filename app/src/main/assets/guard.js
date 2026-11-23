@@ -110,4 +110,32 @@
     neutralize();
   }
   startObserver();
+
+  // 4) Laporan status pemutaran video ke aplikasi (layar tetap menyala, PiP, episode berikutnya).
+  var frameId = Math.random().toString(36).slice(2) + Date.now().toString(36);
+  function bridge() { try { return window.LkBridge || null; } catch (e) { return null; } }
+  function report(playing) {
+    var b = bridge();
+    if (b && b.onPlayback) { try { b.onPlayback(frameId, !!playing); } catch (e) {} }
+  }
+  function anyPlaying() {
+    var v = document.getElementsByTagName('video');
+    for (var i = 0; i < v.length; i++) {
+      if (!v[i].paused && !v[i].ended && v[i].readyState > 2) return true;
+    }
+    return false;
+  }
+  function isVideo(e) { return e.target && e.target.tagName === 'VIDEO'; }
+  document.addEventListener('playing', function (e) { if (isVideo(e)) report(true); }, true);
+  document.addEventListener('play', function (e) { if (isVideo(e)) report(true); }, true);
+  document.addEventListener('pause', function (e) { if (isVideo(e)) report(anyPlaying()); }, true);
+  document.addEventListener('emptied', function (e) { if (isVideo(e)) report(anyPlaying()); }, true);
+  document.addEventListener('ended', function (e) {
+    if (!isVideo(e)) return;
+    report(anyPlaying());
+    var b = bridge();
+    // Hanya video panjang (>10 menit) yang dianggap film/episode, bukan iklan.
+    if (b && b.onEnded && e.target.duration > 600) { try { b.onEnded(); } catch (x) {} }
+  }, true);
+  window.addEventListener('pagehide', function () { report(false); });
 })();

@@ -3,5 +3,22 @@
     <string name="app_name">LK21 WebView</string>
     <string name="error_message">Halaman gagal dimuat. Periksa koneksi internet Anda.</string>
     <string name="retry">Coba lagi</string>
+    <string name="go_home">Ke beranda</string>
     <string name="blocked_toast">Tautan iklan/eksternal diblokir</string>
+    <string name="press_again_exit">Tekan sekali lagi untuk keluar</string>
+    <string name="auto_next_message">Episode berikutnya diputar dalam 6 detik</string>
+    <string name="cancel">Batal</string>
+    <string name="menu_description">Menu</string>
+    <string name="menu_home">Beranda</string>
+    <string name="menu_refresh">Muat ulang</string>
+    <string name="menu_share">Bagikan tautan</string>
+    <string name="menu_copy">Salin tautan</string>
+    <string name="menu_browser">Buka di browser</string>
+    <string name="menu_auto_next">Putar episode berikutnya otomatis</string>
+    <string name="menu_desktop">Mode desktop</string>
+    <string name="menu_clear">Hapus cache dan cookie</string>
+    <string name="menu_stats">Iklan diblokir: %1$d</string>
+    <string name="link_copied">Tautan disalin</string>
+    <string name="cache_cleared">Cache dan cookie dihapus</string>
+    <string name="no_browser">Tidak ada aplikasi browser</string>
 </resources>
